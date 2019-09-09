@@ -245,7 +245,10 @@ std::unordered_map<uint8_t, gbdsm::Instruction> gbdsm::INSTRUCTIONS = {
     { 0xfa , gbdsm::Instruction{ 0xfa, "LD", 3, 16 } },
     { 0xfb , gbdsm::Instruction{ 0xfb, "EI", 1, 4 } },
     { 0xfe , gbdsm::Instruction{ 0xfe, "CP", 2, 8 } },
-    { 0xff , gbdsm::Instruction{ 0xff, "RST", 1, 16 } },
+    { 0xff , gbdsm::Instruction{ 0xff, "RST", 1, 16 } }
+};
+
+std::unordered_map<uint8_t, gbdsm::Instruction> gbdsm::PREFIXED_INSTRUCTIONS = {
     { 0x0 , gbdsm::Instruction{ 0x0, "RLC", 2, 8 } },
     { 0x1 , gbdsm::Instruction{ 0x1, "RLC", 2, 8 } },
     { 0x2 , gbdsm::Instruction{ 0x2, "RLC", 2, 8 } },

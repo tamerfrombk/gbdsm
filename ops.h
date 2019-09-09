@@ -14,5 +14,6 @@ struct Instruction {
 };
 
 extern std::unordered_map<uint8_t, Instruction> INSTRUCTIONS;
+extern std::unordered_map<uint8_t, Instruction> PREFIXED_INSTRUCTIONS;
 
 }
