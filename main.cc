@@ -39,10 +39,27 @@ static Rom read_rom(const char* path)
     return vec;
 }
 
+static void print_inst(unsigned pos, const gbdsm::Instruction& inst)
+{
+    std::printf("%.2X | [%.2X] %s | %d\n", pos, inst.op, inst.mnemonic.c_str(), inst.length);
+}
+
 static void disassemble(const Rom& rom)
 {
-    for (auto b : rom) {
-        std::printf("%.2X\n", b);
+    unsigned head = 0;
+    while (head < rom.size()) {
+        const auto& inst = gbdsm::INSTRUCTIONS[rom[head]];
+        if (inst.isPrefix()) {
+            print_inst(head, inst);
+            head++;
+            const auto& pre = gbdsm::PREFIXED_INSTRUCTIONS[rom[head]];
+            print_inst(head, pre);
+            head += pre.length;
+        }  // TODO: implement jumps and visitation
+        else {
+            print_inst(head, inst);
+            head += inst.length;
+        }
     }
 }
 
