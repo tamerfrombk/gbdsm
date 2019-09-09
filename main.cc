@@ -1,6 +1,7 @@
-#include <cstdio>
+#include "ops.h"
+#include <iostream>
 
 int main()
 {
-    std::puts("Hello");
+    std::cout << gbdsm::INSTRUCTIONS[0x00].mnemonic << "\n";
 }
