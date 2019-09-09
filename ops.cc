@@ -1,5 +1,10 @@
 #include "ops.h" 
 
+bool gbdsm::Instruction::isPrefix() const
+{
+    return op == 0xCB;
+}
+
 std::unordered_map<uint8_t, gbdsm::Instruction> gbdsm::INSTRUCTIONS = {
     { 0x0 , gbdsm::Instruction{ 0x0, "NOP", 1, 4 } },
     { 0x1 , gbdsm::Instruction{ 0x1, "LD", 3, 12 } },
