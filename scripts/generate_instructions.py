@@ -14,37 +14,52 @@ import json
 
 class Instruction():
 
-    def __init__(self, op, mnemonic, length, cycles):
+    def __init__(self, op, mnemonic, length, cycles, args):
         self.op = op 
         self.mnemonic = mnemonic 
         self.length = length
         self.cycles = cycles
+        self.args = args
 
     def __repr__(self):
-        return '{{ {} , Instruction{{ {}, "{}", {}, {} }} }},'\
-                .format(self.op, self.op, self.mnemonic, self.length, self.cycles)
+        return '{{ {} , Instruction{{ {}, "{} {}", {}, {} }} }},'\
+                .format(self.op, self.op, self.mnemonic, self.args, self.length, self.cycles)
 
-def create_instruction(obj, is_prefixed):
-    op = obj['addr']
-    mnemonic = obj['mnemonic']
-    length = int(obj['length'])
-    cycles = int(obj['cycles'][0])
+def create_instruction(obj):
+    op = obj['addr'].upper()
+    mnemonic = obj['mnemonic'].upper()
+    length = obj['length']
+    cycles = obj['cycles'][0]
 
-    return Instruction(op, mnemonic, length, cycles)
+    args = "" 
+
+    # add arguments
+    if 'operand1' in obj:
+        args += obj['operand1'].upper()
+
+    if 'operand2' in obj:
+        args += ','
+        args += obj['operand2'].upper()
+
+    # data arguments should be templated
+    if "D8" in args:
+       args = args.replace("D8", "%D8")
+        
+    if "D16" in args:
+       args = args.replace("D16", "%D16")
+
+    return Instruction(op, mnemonic, length, cycles, args)
 
 def generate_instructions(path):
     with open(path, 'r') as f:
         root = json.load(f)
 
-        prefixed = root['cbprefixed']
-        for obj in prefixed:
-            inst = create_instruction(prefixed[obj], True)
-            print(inst)
-            
-        unprefixed = root['unprefixed']
-        for obj in unprefixed:
-            inst = create_instruction(unprefixed[obj], False)
-            print(inst)
+        levels = ['unprefixed', 'cbprefixed']
+        for level in levels:
+            prefix_type = root[level]
+            for obj in prefix_type:
+                inst = create_instruction(prefix_type[obj])
+                print(inst)
 
 def main():
     argc = len(argv)
