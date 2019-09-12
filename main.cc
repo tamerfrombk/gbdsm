@@ -49,10 +49,14 @@ static void disassemble(const Rom& rom)
     unsigned head = 0;
     while (head < rom.size()) {
         const auto& inst = gbdsm::INSTRUCTIONS[rom[head]];
+        if (inst.length == 0) {
+            // TODO: this is in place while jumps and visitation is not implemented
+            // Without them implemented, we are interpreting data as code
+            std::printf("ERROR! %.2X @ %.2X length 0!\n", inst.op, head);
+            break;
+        }
         if (inst.isPrefix()) {
-            print_inst(head, inst);
-            head++;
-            const auto& pre = gbdsm::PREFIXED_INSTRUCTIONS[rom[head]];
+            const auto& pre = gbdsm::PREFIXED_INSTRUCTIONS[rom[head + 1]];
             print_inst(head, pre);
             head += pre.length;
         }  // TODO: implement jumps and visitation
