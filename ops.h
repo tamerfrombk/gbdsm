@@ -13,6 +13,8 @@ struct Instruction {
     uint8_t cycles;
 
     bool isPrefix() const;
+
+    bool isJump() const;
 };
 
 extern std::unordered_map<uint8_t, Instruction> INSTRUCTIONS;

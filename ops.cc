@@ -5,6 +5,16 @@ bool gbdsm::Instruction::isPrefix() const
     return op == 0xCB;
 }
 
+
+bool gbdsm::Instruction::isJump() const
+{
+    return op == 0xC3 // JP nn
+        || op == 0xC2 || op == 0xCA || op == 0xD2 || op == 0xDA // JP cc, nn
+        || op == 0xE9 // JP (HL) <-- unsupported!
+        || op == 0x18 // JR n
+        || op == 0x20 || op == 0x28 || op == 0x30 || op == 0x38; // JP cc, n
+}
+
 std::unordered_map<uint8_t, gbdsm::Instruction> gbdsm::INSTRUCTIONS = {
     { 0x0 , Instruction{ 0x0, "NOP ", 1, 4 } },
     { 0x1 , Instruction{ 0x1, "LD BC,%D16", 3, 12 } },
