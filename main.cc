@@ -5,15 +5,14 @@
 
 #include "ops.h"
 #include "common.h"
-
-using Rom = std::vector<std::uint8_t>;
+#include "dasm.h"
 
 static void print_help()
 {
     std::puts("Help.");
 }
 
-static Rom read_rom(const char* path)
+static gbdsm::Rom read_rom(const char* path)
 {
      // open the file:
     std::ifstream file(path, std::ios::binary);
@@ -29,7 +28,7 @@ static Rom read_rom(const char* path)
     file.seekg(0, std::ios::beg);
 
     // reserve capacity
-    Rom vec;
+    gbdsm::Rom vec;
     vec.reserve(fileSize);
 
     // read the data:
@@ -40,43 +39,6 @@ static Rom read_rom(const char* path)
     return vec;
 }
 
-static void print_inst(unsigned pos, const gbdsm::Instruction& inst)
-{
-    std::printf("%.2X | [%.2X] %s | %d\n", pos, inst.op, inst.mnemonic.c_str(), inst.length);
-}
-
-static void disassemble(const Rom& rom)
-{
-    unsigned head = 0;
-    while (head < rom.size()) {
-        const auto& inst = gbdsm::INSTRUCTIONS[rom[head]];
-        if (inst.length == 0) {
-            // TODO: this is in place while jumps and visitation is not implemented
-            // Without them implemented, we are interpreting data as code
-            gbdsm::abort("ERROR! %.2X @ %.2X length 0!\n", inst.op, head);
-        } 
-        else if (inst.isJump()) {
-            if (inst.op == 0xE9) {
-                // JP (HL) is unsupported as it is a dynamic jump instruction
-                // that cannot easily be traced
-                gbdsm::abort("JP (HL) instruction not supported!\n");
-            }
-            else {
-                print_inst(head, inst);
-                head += inst.length;
-            }
-        }
-        else if (inst.isPrefix()) {
-            const auto& pre = gbdsm::PREFIXED_INSTRUCTIONS[rom[head + 1]];
-            print_inst(head, pre);
-            head += pre.length;
-        }  // TODO: implement jumps and visitation
-        else {
-            print_inst(head, inst);
-            head += inst.length;
-        }
-    }
-}
 
 int main(int argc, char **argv)
 {
@@ -92,5 +54,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    disassemble(rom);
+    gbdsm::Disassembler dasm(rom);
+
+    dasm.disassemble();
 }

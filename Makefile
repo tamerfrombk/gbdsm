@@ -6,7 +6,7 @@
 
 CC := g++
 CXXFLAGS := --std=c++14 -Wall -Wextra -Wpedantic -Werror
-SOURCES := main.cc ops.cc 
+SOURCES := main.cc ops.cc dasm.cc
 OBJECTS := $(SOURCES:.cc=.o)
 PROGRAM := gbdsm
 
