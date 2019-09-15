@@ -1,9 +1,10 @@
-#include "ops.h"
 #include <cstdio>
-#include <iostream>
 #include <vector>
 #include <fstream>
 #include <iterator>
+
+#include "ops.h"
+#include "common.h"
 
 using Rom = std::vector<std::uint8_t>;
 
@@ -52,15 +53,13 @@ static void disassemble(const Rom& rom)
         if (inst.length == 0) {
             // TODO: this is in place while jumps and visitation is not implemented
             // Without them implemented, we are interpreting data as code
-            std::printf("ERROR! %.2X @ %.2X length 0!\n", inst.op, head);
-            break;
+            gbdsm::abort("ERROR! %.2X @ %.2X length 0!\n", inst.op, head);
         } 
         else if (inst.isJump()) {
             if (inst.op == 0xE9) {
                 // JP (HL) is unsupported as it is a dynamic jump instruction
                 // that cannot easily be traced
-                std::fprintf(stderr, "JP (HL) instruction not supported!\n");
-                break;
+                gbdsm::abort("JP (HL) instruction not supported!\n");
             }
             else {
                 print_inst(head, inst);
