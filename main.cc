@@ -54,8 +54,14 @@ static void disassemble(const Rom& rom)
             // Without them implemented, we are interpreting data as code
             std::printf("ERROR! %.2X @ %.2X length 0!\n", inst.op, head);
             break;
-        }
-        if (inst.isPrefix()) {
+        } 
+        else if (inst.op == 0xE9) {
+            // JP (HL) is unsupported as it is a dynamic jump instruction
+            // that cannot easily be traced
+            std::fprintf(stderr, "JP (HL) instruction not supported!\n");
+            break;
+        } 
+        else if (inst.isPrefix()) {
             const auto& pre = gbdsm::PREFIXED_INSTRUCTIONS[rom[head + 1]];
             print_inst(head, pre);
             head += pre.length;
