@@ -39,10 +39,10 @@ void gbdsm::Disassembler::print_inst(unsigned pos, Instruction inst)
     }
     else if ((found = to_print.find("R8")) != std::string::npos) {
         int8_t target = rom_[pos + 1] + pos + inst.length;
-        to_print = to_print.replace(found, 3, to_hex(target)); 
+        to_print = to_print.replace(found, 2, to_hex(target)); 
     }
     else if ((found = to_print.find("A16")) != std::string::npos) {
-        to_print = to_print.replace(found, 4, to_hex(rom_[pos + 1], rom_[pos + 2]));
+        to_print = to_print.replace(found, 3, to_hex(rom_[pos + 1], rom_[pos + 2]));
     }
 
     std::printf("%s    ; $%.4X\n", to_print.c_str(), pos);
