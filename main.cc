@@ -1,4 +1,8 @@
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <string>
+#include <limits>
 
 #include "ops.h"
 #include "common.h"
@@ -34,8 +38,6 @@ static gbdsm::Rom read_rom(const char* path)
 
     size_t bytesRead = std::fread(rom.data(), sizeof(uint8_t), fileSize, file);
     if (bytesRead != fileSize) {
-        gbdsm::error("%s expected to read %zu bytes but read %zu instead!\n",
-                path, fileSize, bytesRead);
         std::fclose(file);
 
         return gbdsm::Rom{};
@@ -46,23 +48,79 @@ static gbdsm::Rom read_rom(const char* path)
     return rom;
 }
 
+struct Args {
+    std::string rom_path;
+    size_t begin, end;
+    bool print_help;
+};
+
+static Args parse_args(int argc, char **argv)
+{
+    Args args;
+    if (argc < 2) { 
+        return args;
+    }
+
+    if (std::strcmp("-h", argv[1]) == 0) {
+        args.print_help = true;
+        return args;
+    }
+
+    args.rom_path = argv[1];
+    args.begin = 0;
+    args.end = std::numeric_limits<size_t>::max();
+    args.print_help = false;
+
+    for (int i = 2; i < argc;) {
+        if (std::strcmp(argv[i], "-b") == 0) {
+            args.begin = std::stoull(argv[i + 1]);
+            i += 2;
+        } else if (std::strcmp(argv[i], "-e") == 0) {
+            args.end = std::stoull(argv[i + 1]);
+            i += 2;
+        } else if (std::strcmp(argv[i], "-h") == 0) {
+            args.print_help = true; 
+            ++i;
+        } else {
+            gbdsm::error("Unrecognized argument %s.\n", argv[i]);
+            std::exit(1);
+        }
+    }
+
+    return args;
+}
+
 
 int main(int argc, char **argv)
 {
-    if (argc != 2) {
-        gbdsm::error("Need input ROM.\n");
+    Args args = parse_args(argc, argv);
+    if (args.print_help) {
         print_help();
+        return 0;
+    }
+
+    if (args.rom_path.empty()) {
+        gbdsm::error("The GameBoy ROM file was not supplied.\n");
         return 1;
     }
 
-    auto rom = read_rom(argv[1]);
+    if (args.end < args.begin) {
+        gbdsm::error("The end (%zu) cannot be less than the beginning (%zu).\n",
+                args.end, args.begin);
+        return 1;
+    }
+
+    auto rom = read_rom(args.rom_path.c_str());
     if (rom.empty()) {
-        gbdsm::error("Can't read %s.\n", argv[1]);
+        gbdsm::error("Could not read %s.\n", args.rom_path.c_str());
         return 1;
     }
 
-    size_t end = rom.size();
+    if (args.end == std::numeric_limits<size_t>::max()) {
+        args.end = rom.size();
+    }
+
     gbdsm::Disassembler dasm(rom);
 
-    dasm.disassemble(0, end);
+    dasm.disassemble(args.begin, args.end);
 }
