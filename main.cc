@@ -10,7 +10,17 @@
 
 static void print_help()
 {
-    std::puts("Help.");
+    std::puts("gbdsm -- The GameBoy ROM disassembler.");
+    std::putchar('\n');
+
+    std::puts("Usage: gbdsm '/path/to/rom.gb' [-h] [-b address] [-e address]");
+    
+    std::putchar('\n');
+
+    std::puts("Optional arguments:");
+    std::puts("-h            show this help message and exit.");
+    std::puts("-b address    set the starting address for the disassembler. Defaults to 0x0.");
+    std::puts("-e address    set the end address for the disassembler. Defaults to the end of ROM.");
 }
 
 static size_t fsize(std::FILE *file)
