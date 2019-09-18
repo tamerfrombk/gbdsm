@@ -20,7 +20,7 @@ Optional arguments:
 
 `gbdsm` uses a standard `Makefile` for building and installing. A version of `g++` supporting C++14 is required.
 
-Navigate to the directory where you downloaded the sources and run `make`. This will build the executable named `gbdsm` into that directory.
+Navigate to the directory where you downloaded the sources and run `make`. This will build the executable named `gbdsm` into that directory. By default, a release version will be built. To build a debug version, use the `make debug` command.
 
 To remove artifacts, use the `make clean` command.
 
