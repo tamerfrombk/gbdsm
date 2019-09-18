@@ -12,8 +12,8 @@ gbdsm '/path/to/rom.gb' [-h] [-b address] [-e address]
 
 Optional arguments:
 -h            show this help message and exit.
--b address    set the starting address for the disassembler. Defaults to 0x0.
--e address    set the end address for the disassembler. Defaults to the end of ROM.
+-b address    set the starting address for the disassembler in decimal. Defaults to 0x0.
+-e address    set the end address for the disassembler in decimal. Defaults to the end of ROM.
 ```
 
 ## Building

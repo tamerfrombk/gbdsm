@@ -19,8 +19,8 @@ static void print_help()
 
     std::puts("Optional arguments:");
     std::puts("-h            show this help message and exit.");
-    std::puts("-b address    set the starting address for the disassembler. Defaults to 0x0.");
-    std::puts("-e address    set the end address for the disassembler. Defaults to the end of ROM.");
+    std::puts("-b address    set the starting address for the disassembler in decimal. Defaults to 0x0.");
+    std::puts("-e address    set the end address for the disassembler in decimal. Defaults to the end of ROM.");
 }
 
 static size_t fsize(std::FILE *file)
@@ -126,7 +126,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    if (args.end == std::numeric_limits<size_t>::max()) {
+    if (args.end > rom.size()) {
         args.end = rom.size();
     }
 
