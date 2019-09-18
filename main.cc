@@ -1,7 +1,4 @@
 #include <cstdio>
-#include <vector>
-#include <fstream>
-#include <iterator>
 
 #include "ops.h"
 #include "common.h"
@@ -12,31 +9,41 @@ static void print_help()
     std::puts("Help.");
 }
 
+static size_t fsize(std::FILE *file)
+{
+    size_t curr = std::ftell(file);
+    std::fseek(file, 0, SEEK_END);
+
+    size_t size = std::ftell(file);
+
+    std::fseek(file, curr, SEEK_SET);
+
+    return size;
+}
+
 static gbdsm::Rom read_rom(const char* path)
 {
-     // open the file:
-    std::ifstream file(path, std::ios::binary);
+    std::FILE *file = std::fopen(path, "rb");
+    if (!file) {
+        return gbdsm::Rom{};
+    }
 
-    // Stop eating new lines in binary mode!!!
-    file.unsetf(std::ios::skipws);
+    size_t fileSize = fsize(file);
 
-    // get its size:
-    std::streampos fileSize;
+    gbdsm::Rom rom(fileSize, 0);
 
-    file.seekg(0, std::ios::end);
-    fileSize = file.tellg();
-    file.seekg(0, std::ios::beg);
+    size_t bytesRead = std::fread(rom.data(), sizeof(uint8_t), fileSize, file);
+    if (bytesRead != fileSize) {
+        gbdsm::error("%s expected to read %zu bytes but read %zu instead!\n",
+                path, fileSize, bytesRead);
+        std::fclose(file);
 
-    // reserve capacity
-    gbdsm::Rom vec;
-    vec.reserve(fileSize);
+        return gbdsm::Rom{};
+    }
 
-    // read the data:
-    vec.insert(vec.begin(),
-               std::istream_iterator<std::uint8_t>(file),
-               std::istream_iterator<std::uint8_t>());
+    std::fclose(file);
 
-    return vec;
+    return rom;
 }
 
 
