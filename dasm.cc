@@ -9,13 +9,13 @@ gbdsm::Disassembler::Disassembler(Rom rom)
 
 void gbdsm::Disassembler::disassemble()
 {
-    unsigned head = 0;
-    while (head < rom_.size()) {
-        const auto& inst = gbdsm::INSTRUCTIONS[rom_[head]];
+    unsigned PC = 0;
+    while (PC < rom_.size()) {
+        const auto& inst = gbdsm::INSTRUCTIONS[rom_[PC]];
         if (inst.length == 0) {
             // TODO: this is in place while jumps and visitation is not implemented
             // Without them implemented, we are interpreting data as code
-            gbdsm::abort("ERROR! %.2X @ %.2X length 0!\n", inst.op, head);
+            gbdsm::abort("ERROR! %.2X @ %.2X length 0!\n", inst.op, PC);
         } 
         else if (inst.isJump()) {
             if (inst.op == 0xE9) {
@@ -24,18 +24,18 @@ void gbdsm::Disassembler::disassemble()
                 gbdsm::abort("JP (HL) instruction not supported!\n");
             }
             else {
-                print_inst(head, inst);
-                head += inst.length;
+                print_inst(PC, inst);
+                PC += inst.length;
             }
         }
         else if (inst.isPrefix()) {
-            const auto& pre = gbdsm::PREFIXED_INSTRUCTIONS[rom_[head + 1]];
-            print_inst(head, pre);
-            head += pre.length;
+            const auto& pre = gbdsm::PREFIXED_INSTRUCTIONS[rom_[PC + 1]];
+            print_inst(PC, pre);
+            PC += pre.length;
         }  // TODO: implement jumps and visitation
         else {
-            print_inst(head, inst);
-            head += inst.length;
+            print_inst(PC, inst);
+            PC += inst.length;
         }
     }
 }
