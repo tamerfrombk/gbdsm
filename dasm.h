@@ -16,7 +16,7 @@ public:
     void disassemble(size_t start, size_t end);
 
 private:
-    void print_inst(unsigned pos, Instruction instruction);
+    void print_inst(size_t pos, const Instruction& instruction);
 
     Rom rom_;
 };
