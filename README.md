@@ -24,3 +24,13 @@ Navigate to the directory where you downloaded the sources and run `make`. This 
 
 To remove artifacts, use the `make clean` command.
 
+## Installing
+
+To install the executable on your system, type `sudo make install`. This will place the `gbdsm` executable in your `/opt/bin` directory by default. To customize the installation directory, set the `INSTALL_DIR` variable when running `make`: `sudo make install INSTALL_DIR=/path/to/install`
+
+**NOTE**: In order to access `gbdsm` without using the full path `/opt/bin/gbdsm`, you may need to add `/opt/bin` to your `PATH`. 
+
+## Uninstalling
+
+To uninstall, simply run `sudo make uninstall`. This will remove the `gbdsm` executable from `/opt/bin` by default. If you opted to install the program elsewhere, you will need to supply the installation directory when running `make`: `sudo make uninstall INSTALL_DIR=/path/to/install`
+
