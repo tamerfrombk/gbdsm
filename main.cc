@@ -14,7 +14,7 @@ static void print_help()
     std::putchar('\n');
 
     std::puts("Usage: gbdsm '/path/to/rom.gb' [-h] [-b address] [-e address]");
-    
+
     std::putchar('\n');
 
     std::puts("Optional arguments:");
@@ -67,7 +67,7 @@ struct Args {
 static Args parse_args(int argc, char **argv)
 {
     Args args;
-    if (argc < 2) { 
+    if (argc < 2) {
         return args;
     }
 
@@ -89,7 +89,7 @@ static Args parse_args(int argc, char **argv)
             args.end = std::stoull(argv[i + 1]);
             i += 2;
         } else if (std::strcmp(argv[i], "-h") == 0) {
-            args.print_help = true; 
+            args.print_help = true;
             ++i;
         } else {
             gbdsm::error("Unrecognized argument %s.\n", argv[i]);
@@ -130,7 +130,7 @@ int main(int argc, char **argv)
         args.end = rom.size();
     }
 
-    gbdsm::Disassembler dasm(rom);
+    auto dasm = gbdsm::create_dasm(rom);
 
-    dasm.disassemble(args.begin, args.end);
+    dasm->disassemble(args.begin, args.end);
 }

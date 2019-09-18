@@ -54,5 +54,6 @@ namespace gbdsm {
 
         return to_hex(result);
     }
+
 }
 

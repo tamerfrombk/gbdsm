@@ -2,8 +2,7 @@
 
 #include <vector>
 #include <cstdint>
-
-#include "ops.h"
+#include <memory>
 
 namespace gbdsm {
 
@@ -13,12 +12,12 @@ class Disassembler {
 public:
     Disassembler(Rom rom);
 
-    void disassemble(size_t start, size_t end);
+    virtual void disassemble(size_t start, size_t end) = 0;
 
-private:
-    void print_inst(size_t pos, const Instruction& instruction);
-
+protected:
     Rom rom_;
 };
+
+std::unique_ptr<gbdsm::Disassembler> create_dasm(gbdsm::Rom rom);
 
 }
