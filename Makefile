@@ -4,7 +4,6 @@
 # Copyright Tamer Aly 2019
 #
 
-CXX := g++
 CXXFLAGS := --std=c++14 -Wall -Wextra -Wpedantic -Werror
 
 SOURCES := main.cc ops.cc dasm.cc
