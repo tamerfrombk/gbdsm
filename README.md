@@ -34,3 +34,21 @@ To install the executable on your system, type `sudo make install`. This will pl
 
 To uninstall, simply run `sudo make uninstall`. This will remove the `gbdsm` executable from `/opt/bin` by default. If you opted to install the program elsewhere, you will need to supply the installation directory when running `make`: `sudo make uninstall INSTALL_DIR=/path/to/install`
 
+## Examples
+
+Here is an example showing the disassembly for the address range [0, 20) for the GameBoy boot ROM:
+
+```
+> ./gbdsm boot.gb -b 0 -e 20
+
+LD SP,$FFFE    ; $0000
+XOR A    ; $0003
+LD HL,$9FFF    ; $0004
+LD (HL-),A    ; $0007
+BIT 7,H    ; $0008
+JR NZ,$7    ; $000A
+LD HL,$FF26    ; $000C
+LD C,$11    ; $000F
+LD A,$80    ; $0011
+LD (HL-),A    ; $0013
+```
