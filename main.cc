@@ -54,7 +54,8 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    size_t end = rom.size();
     gbdsm::Disassembler dasm(rom);
 
-    dasm.disassemble();
+    dasm.disassemble(0, end);
 }

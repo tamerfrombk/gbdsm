@@ -13,7 +13,7 @@ class Disassembler {
 public:
     Disassembler(Rom rom);
 
-    void disassemble();
+    void disassemble(size_t start, size_t end);
 
 private:
     void print_inst(unsigned pos, Instruction instruction);

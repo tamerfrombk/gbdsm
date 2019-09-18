@@ -32,10 +32,10 @@ gbdsm::Disassembler::Disassembler(Rom rom)
     : rom_(std::move(rom)) {}
 
 
-void gbdsm::Disassembler::disassemble()
+void gbdsm::Disassembler::disassemble(size_t start, size_t end)
 {
-    unsigned PC = 0;
-    while (PC < rom_.size()) {
+    size_t PC = start;
+    while (PC < end) {
         const auto& inst = gbdsm::INSTRUCTIONS[rom_[PC]];
         if (inst.length == 0) {
             // TODO: Is it really this easy?
