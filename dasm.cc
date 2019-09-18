@@ -44,5 +44,5 @@ void gbdsm::Disassembler::disassemble()
 
 void gbdsm::Disassembler::print_inst(unsigned pos, Instruction inst)
 {
-    std::printf("%.2X | [%.2X] %s | %d\n", pos, inst.op, inst.mnemonic.c_str(), inst.length);
+    std::printf("%s    ; $%.4X\n", inst.mnemonic.c_str(), pos);
 }
