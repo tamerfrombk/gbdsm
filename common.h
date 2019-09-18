@@ -6,6 +6,17 @@
 namespace gbdsm {
 
     template <class... Args>
+    inline void error(const char *msg, Args&&... args)
+    {
+        std::fprintf(stderr, msg, std::forward<Args>(args)...);
+    }
+
+    inline void error(const char *msg)
+    {
+        std::fputs(msg, stderr);
+    }
+
+    template <class... Args>
     inline void abort(const char *msg, Args&&... args)
     {
         std::fprintf(stderr, msg, std::forward<Args>(args)...);

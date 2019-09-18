@@ -43,14 +43,14 @@ static gbdsm::Rom read_rom(const char* path)
 int main(int argc, char **argv)
 {
     if (argc != 2) {
-        std::puts("Need input ROM.");
+        gbdsm::error("Need input ROM.\n");
         print_help();
         return 1;
     }
 
     auto rom = read_rom(argv[1]);
     if (rom.empty()) {
-        std::printf("Can't read %s.\n", argv[1]);
+        gbdsm::error("Can't read %s.\n", argv[1]);
         return 1;
     }
 
