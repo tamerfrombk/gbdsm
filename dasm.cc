@@ -15,7 +15,9 @@ void gbdsm::Disassembler::disassemble()
         if (inst.length == 0) {
             // TODO: this is in place while jumps and visitation is not implemented
             // Without them implemented, we are interpreting data as code
-            gbdsm::abort("ERROR! %.2X @ %.2X length 0!\n", inst.op, PC);
+            // TODO: Again, is it really this easy.
+            std::printf("%.2X @ %.2X is unknown!\n", rom_[PC], PC);
+            PC += 1;
         } 
         else if (inst.isJump()) {
             if (inst.op == 0xE9) {
