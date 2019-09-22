@@ -1,5 +1,5 @@
 #include <stack>
-#include <set>
+
 #include <vector>
 
 #include "recursive_search_dasm.h"
@@ -9,6 +9,35 @@ gbdsm::RecursiveSearchDisassembler::RecursiveSearchDisassembler(Rom rom)
     : gbdsm::Disassembler(rom) {}
 
 void gbdsm::RecursiveSearchDisassembler::disassemble(size_t start, size_t end)
+{
+    const std::set<uint16_t> visited = prune_visited_addresses(start, end);
+
+    std::vector<uint16_t> data_addresses;
+    for (size_t addr = 0; addr < rom_.size();) {
+        // if we have visited this address, it's code
+        if (visited.find(addr) != visited.end()) {
+            const auto& inst = gbdsm::INSTRUCTIONS[rom_[addr]];
+            if (inst.isPrefix()) {
+                const auto& pre = gbdsm::PREFIXED_INSTRUCTIONS[rom_[addr + 1]];
+                print_inst(addr, pre);
+                addr += pre.length;
+            } else {
+                print_inst(addr, inst);
+                addr += inst.length;
+            }
+        } else {
+            data_addresses.push_back(addr);
+            ++addr;
+        }
+    }
+
+    // Now print data
+    for (auto addr : data_addresses) {
+        std::printf(".DB $%.2X ; %.4X\n", rom_[addr], addr);
+    }
+}
+
+std::set<uint16_t> gbdsm::RecursiveSearchDisassembler::prune_visited_addresses(size_t start, size_t end) const
 {
     std::stack<uint16_t> calls;
 
@@ -74,6 +103,7 @@ void gbdsm::RecursiveSearchDisassembler::disassemble(size_t start, size_t end)
         }
         else if (inst.isReturn()) {
             uint8_t next_instruction_address = calls.top();
+
             calls.pop();
             visited.insert(PC);
 
@@ -88,30 +118,7 @@ void gbdsm::RecursiveSearchDisassembler::disassemble(size_t start, size_t end)
         }
     }
 
-    // Disassemble
-    std::vector<uint16_t> data_addresses;
-    for (size_t addr = 0; addr < rom_.size();) {
-        // if we have visited this address, it's code
-        if (visited.find(addr) != visited.end()) {
-            const auto& inst = gbdsm::INSTRUCTIONS[rom_[addr]];
-            if (inst.isPrefix()) {
-                const auto& pre = gbdsm::PREFIXED_INSTRUCTIONS[rom_[addr + 1]];
-                print_inst(addr, pre);
-                addr += pre.length;
-            } else {
-                print_inst(addr, inst);
-                addr += inst.length;
-            }
-        } else {
-            data_addresses.push_back(addr);
-            ++addr;
-        }
-    }
-
-    // Now print data
-    for (auto addr : data_addresses) {
-        std::printf(".DB $%.2X ; %.4X\n", rom_[addr], addr);
-    }
+    return visited;
 }
 
 void gbdsm::RecursiveSearchDisassembler::print_inst(size_t pos, const Instruction& inst)
