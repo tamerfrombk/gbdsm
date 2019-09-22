@@ -12,8 +12,6 @@ public:
 
     virtual void disassemble(size_t start, size_t end) override;
 
-private:
-    void print_inst(size_t pos, const Instruction& inst);
 };
 
 }

@@ -120,24 +120,3 @@ std::set<uint16_t> gbdsm::RecursiveSearchDisassembler::prune_visited_addresses(s
 
     return visited;
 }
-
-void gbdsm::RecursiveSearchDisassembler::print_inst(size_t pos, const Instruction& inst)
-{
-    size_t found = 0;
-    std::string to_print = inst.mnemonic;
-    if ((found = to_print.find("%D8")) != std::string::npos) {
-        to_print = to_print.replace(found, 3, to_hex(rom_[pos + 1]));
-    }
-    else if ((found = to_print.find("%D16")) != std::string::npos) {
-        to_print = to_print.replace(found, 4, to_hex(rom_[pos + 1], rom_[pos + 2]));
-    }
-    else if ((found = to_print.find("R8")) != std::string::npos) {
-        int8_t target = rom_[pos + 1] + pos + inst.length;
-        to_print = to_print.replace(found, 2, to_hex(target));
-    }
-    else if ((found = to_print.find("A16")) != std::string::npos) {
-        to_print = to_print.replace(found, 3, to_hex(rom_[pos + 1], rom_[pos + 2]));
-    }
-
-    std::printf("%s    ; $%.4zX\n", to_print.c_str(), pos);
-}

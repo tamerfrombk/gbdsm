@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "common.h"
+#include "ops.h"
 
 namespace gbdsm {
 
@@ -17,6 +18,8 @@ public:
     virtual void disassemble(size_t start, size_t end) = 0;
 
 protected:
+    void print_inst(size_t PC, const gbdsm::Instruction& inst) const;
+
     Rom rom_;
 };
 
