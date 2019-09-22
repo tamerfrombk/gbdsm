@@ -15,6 +15,12 @@ struct Instruction {
     bool isPrefix() const;
 
     bool isJump() const;
+
+    bool isCall() const;
+
+    bool isReturn() const;
+
+    bool isRestart() const;
 };
 
 extern std::unordered_map<uint8_t, Instruction> INSTRUCTIONS;

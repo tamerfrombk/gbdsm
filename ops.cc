@@ -1,4 +1,4 @@
-#include "ops.h" 
+#include "ops.h"
 
 bool gbdsm::Instruction::isPrefix() const
 {
@@ -13,6 +13,37 @@ bool gbdsm::Instruction::isJump() const
         || op == 0xE9 // JP (HL) <-- unsupported!
         || op == 0x18 // JR n
         || op == 0x20 || op == 0x28 || op == 0x30 || op == 0x38; // JP cc, n
+}
+
+bool gbdsm::Instruction::isCall() const
+{
+    return op == 0xCD
+        || op == 0xC4
+        || op == 0xCC
+        || op == 0xD4
+        || op == 0xDC;
+}
+
+bool gbdsm::Instruction::isReturn() const
+{
+    return op == 0xC9
+        || op == 0xC0
+        || op == 0xC8
+        || op == 0xD0
+        || op == 0xD8
+        || op == 0xD9; // RETI
+}
+
+bool gbdsm::Instruction::isRestart() const
+{
+    return op == 0xC7
+        || op == 0xCF
+        || op == 0xD7
+        || op == 0xDF
+        || op == 0xE7
+        || op == 0xEF
+        || op == 0xF7
+        || op == 0xFF;
 }
 
 std::unordered_map<uint8_t, gbdsm::Instruction> gbdsm::INSTRUCTIONS = {

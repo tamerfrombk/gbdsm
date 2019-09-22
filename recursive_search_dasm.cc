@@ -1,3 +1,7 @@
+#include <stack>
+#include <set>
+#include <vector>
+
 #include "recursive_search_dasm.h"
 #include "common.h"
 
@@ -6,16 +10,127 @@ gbdsm::RecursiveSearchDisassembler::RecursiveSearchDisassembler(Rom rom)
 
 void gbdsm::RecursiveSearchDisassembler::disassemble(size_t start, size_t end)
 {
-    GBDSM_UNUSED(start);
-    GBDSM_UNUSED(end);
+    std::stack<uint16_t> calls;
 
-    gbdsm::abort("Recursive search unimplemented.\n");
+    std::set<uint16_t> visited;
+
+    size_t PC = start;
+
+    calls.push(PC);
+
+    while (!calls.empty()) {
+        // if we hit past the end, we return to the previous step
+        if (PC >= end) {
+            PC = calls.top();
+            calls.pop();
+        }
+
+        const auto& inst = gbdsm::INSTRUCTIONS[rom_[PC]];
+        if (inst.length == 0) {
+            // If we hit an unknown instruction, this is probably due
+            // to interpreting data as code.
+            PC += 1;
+        }
+        else if (inst.isPrefix()) {
+            const auto& pre = gbdsm::PREFIXED_INSTRUCTIONS[rom_[PC + 1]];
+            visited.insert(PC);
+            PC += pre.length;
+        } else if (inst.isJump()) {
+            if (inst.op == 0xE9) {
+                gbdsm::error("JP (HL) instruction has been detected.\
+                 This may cause disassembly errors with the recursive search algorithm.\
+                 Consider using linear sweep instead.\n");
+                visited.insert(PC);
+                PC += inst.length;
+            }
+            // 16 bit immediate jumps
+            else if (inst.op == 0xC3 || inst.op == 0xC2 || inst.op == 0xCA || inst.op == 0xD2 || inst.op == 0xDA) {
+                uint16_t target = (uint16_t)rom_[PC + 1] | (uint16_t)rom_[PC + 2] << 8;
+                // if we haven't visited the target yet, then add it for visitation
+                if (visited.find(target) == visited.end()) {
+                    calls.push(target);
+                }
+                visited.insert(PC);
+                PC += inst.length;
+            }
+            // 8 bit immediate signed relative jumps
+            else if (inst.op == 0x18 || inst.op == 0x20 || inst.op == 0x28 || inst.op == 0x30 || inst.op == 0x38) {
+                uint16_t target = (int8_t)rom_[PC + 1] + PC + inst.length;
+                // if we haven't visited the target yet, then add it for visitation
+                if (visited.find(target) == visited.end()) {
+                    calls.push(target);
+                }
+                visited.insert(PC);
+                PC += inst.length;
+            }
+        }
+        else if (inst.isCall()) {
+            uint8_t next_instruction_address = PC + inst.length;
+
+            calls.push(next_instruction_address);
+            visited.insert(PC);
+
+            PC = next_instruction_address;
+        }
+        else if (inst.isReturn()) {
+            uint8_t next_instruction_address = calls.top();
+            calls.pop();
+            visited.insert(PC);
+
+            PC = next_instruction_address;
+        }
+        else if (inst.isRestart()) {
+            gbdsm::abort("RST support is not implemented yet.");
+        }
+        else {
+            visited.insert(PC);
+            PC += inst.length;
+        }
+    }
+
+    // Disassemble
+    std::vector<uint16_t> data_addresses;
+    for (size_t addr = 0; addr < rom_.size();) {
+        // if we have visited this address, it's code
+        if (visited.find(addr) != visited.end()) {
+            const auto& inst = gbdsm::INSTRUCTIONS[rom_[addr]];
+            if (inst.isPrefix()) {
+                const auto& pre = gbdsm::PREFIXED_INSTRUCTIONS[rom_[addr + 1]];
+                print_inst(addr, pre);
+                addr += pre.length;
+            } else {
+                print_inst(addr, inst);
+                addr += inst.length;
+            }
+        } else {
+            data_addresses.push_back(addr);
+            ++addr;
+        }
+    }
+
+    // Now print data
+    for (auto addr : data_addresses) {
+        std::printf(".DB $%.2X ; %.4X\n", rom_[addr], addr);
+    }
 }
 
 void gbdsm::RecursiveSearchDisassembler::print_inst(size_t pos, const Instruction& inst)
 {
-    GBDSM_UNUSED(pos);
-    GBDSM_UNUSED(inst);
+    size_t found = 0;
+    std::string to_print = inst.mnemonic;
+    if ((found = to_print.find("%D8")) != std::string::npos) {
+        to_print = to_print.replace(found, 3, to_hex(rom_[pos + 1]));
+    }
+    else if ((found = to_print.find("%D16")) != std::string::npos) {
+        to_print = to_print.replace(found, 4, to_hex(rom_[pos + 1], rom_[pos + 2]));
+    }
+    else if ((found = to_print.find("R8")) != std::string::npos) {
+        int8_t target = rom_[pos + 1] + pos + inst.length;
+        to_print = to_print.replace(found, 2, to_hex(target));
+    }
+    else if ((found = to_print.find("A16")) != std::string::npos) {
+        to_print = to_print.replace(found, 3, to_hex(rom_[pos + 1], rom_[pos + 2]));
+    }
 
-    gbdsm::abort("Recursive search unimplemented.\n");
+    std::printf("%s    ; $%.4zX\n", to_print.c_str(), pos);
 }
