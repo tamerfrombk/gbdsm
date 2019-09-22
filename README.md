@@ -5,6 +5,7 @@ A minimal GameBoy ROM disassembler.
 ## Features
 * Only depends on `libstdc++`
 * Allows range disassembly by specifying start and end addresses for disassembly.
+* Allows for disassembly using either linear sweep or recursive search algorithms.
 
 ## Usage
 ```
@@ -14,6 +15,8 @@ Optional arguments:
 -h            show this help message and exit.
 -b address    set the starting address for the disassembler in decimal. Defaults to 0x0.
 -e address    set the end address for the disassembler in decimal. Defaults to the end of ROM.
+--linear      use the linear sweep algorithm for disassembly. This algorithm is the default.
+--recursive   use the recursive search algorithm for disassembly.
 ```
 
 ## Building
@@ -28,7 +31,7 @@ To remove artifacts, use the `make clean` command.
 
 To install the executable on your system, type `sudo make install`. This will place the `gbdsm` executable in your `/opt/bin` directory by default. To customize the installation directory, set the `INSTALL_DIR` variable when running `make`: `sudo make install INSTALL_DIR=/path/to/install`
 
-**NOTE**: In order to access `gbdsm` without using the full path `/opt/bin/gbdsm`, you may need to add `/opt/bin` to your `PATH`. 
+**NOTE**: In order to access `gbdsm` without using the full path `/opt/bin/gbdsm`, you may need to add `/opt/bin` to your `PATH`.
 
 ## Uninstalling
 

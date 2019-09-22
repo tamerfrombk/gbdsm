@@ -13,7 +13,7 @@ static void print_help()
     std::puts("gbdsm -- The GameBoy ROM disassembler.");
     std::putchar('\n');
 
-    std::puts("Usage: gbdsm '/path/to/rom.gb' [-h] [-b address] [-e address]");
+    std::puts("Usage: gbdsm '/path/to/rom.gb' [-h] [-b address] [-e address] [--linear | --recursive]");
 
     std::putchar('\n');
 
@@ -21,6 +21,8 @@ static void print_help()
     std::puts("-h            show this help message and exit.");
     std::puts("-b address    set the starting address for the disassembler in decimal. Defaults to 0x0.");
     std::puts("-e address    set the end address for the disassembler in decimal. Defaults to the end of ROM.");
+    std::puts("--linear      use the linear sweep algorithm for disassembly. This algorithm is the default.");
+    std::puts("--recursive   use the recursive search algorithm for disassembly.");
 }
 
 static size_t fsize(std::FILE *file)
