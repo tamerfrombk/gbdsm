@@ -61,6 +61,7 @@ static gbdsm::Rom read_rom(const char* path)
 struct Args {
     std::string rom_path;
     size_t begin, end;
+    gbdsm::DisassemblerAlgo algo;
     bool print_help;
 };
 
@@ -80,18 +81,30 @@ static Args parse_args(int argc, char **argv)
     args.begin = 0;
     args.end = std::numeric_limits<size_t>::max();
     args.print_help = false;
+    args.algo = gbdsm::DisassemblerAlgo::LINEAR_SWEEP;
 
     for (int i = 2; i < argc;) {
         if (std::strcmp(argv[i], "-b") == 0) {
             args.begin = std::stoull(argv[i + 1]);
             i += 2;
-        } else if (std::strcmp(argv[i], "-e") == 0) {
+        }
+        else if (std::strcmp(argv[i], "-e") == 0) {
             args.end = std::stoull(argv[i + 1]);
             i += 2;
-        } else if (std::strcmp(argv[i], "-h") == 0) {
+        }
+        else if (std::strcmp(argv[i], "-h") == 0) {
             args.print_help = true;
             ++i;
-        } else {
+        }
+        else if (std::strcmp(argv[i], "--linear") == 0) {
+            args.algo = gbdsm::DisassemblerAlgo::LINEAR_SWEEP;
+            ++i;
+        }
+        else if (std::strcmp(argv[i], "--recursive") == 0) {
+            args.algo = gbdsm::DisassemblerAlgo::RECURSIVE_SEARCH;
+            ++i;
+        }
+        else {
             gbdsm::error("Unrecognized argument %s.\n", argv[i]);
             std::exit(1);
         }
@@ -130,7 +143,7 @@ int main(int argc, char **argv)
         args.end = rom.size();
     }
 
-    auto dasm = gbdsm::create_dasm(rom);
+    auto dasm = gbdsm::create_dasm(rom, args.algo);
 
     dasm->disassemble(args.begin, args.end);
 }

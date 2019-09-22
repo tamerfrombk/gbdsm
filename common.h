@@ -5,7 +5,16 @@
 #include <string>
 #include <algorithm>
 
+#define GBDSM_UNUSED(x) (void)x
+
 namespace gbdsm {
+
+    enum class DisassemblerAlgo {
+
+        LINEAR_SWEEP,
+        RECURSIVE_SEARCH
+
+    };
 
     template <class... Args>
     inline void error(const char *msg, Args&&... args)

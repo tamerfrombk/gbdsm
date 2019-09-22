@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <memory>
 
+#include "common.h"
+
 namespace gbdsm {
 
 using Rom = std::vector<uint8_t>;
@@ -18,6 +20,6 @@ protected:
     Rom rom_;
 };
 
-std::unique_ptr<gbdsm::Disassembler> create_dasm(gbdsm::Rom rom);
+std::unique_ptr<gbdsm::Disassembler> create_dasm(gbdsm::Rom rom, gbdsm::DisassemblerAlgo algo);
 
 }
