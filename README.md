@@ -9,7 +9,7 @@ A minimal GameBoy ROM disassembler.
 
 ## Usage
 ```
-gbdsm '/path/to/rom.gb' [-h] [-b address] [-e address]
+gbdsm '/path/to/rom.gb' [-h] [-b address] [-e address] [--linear | --recursive]
 
 Optional arguments:
 -h            show this help message and exit.
