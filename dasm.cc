@@ -20,7 +20,7 @@ void gbdsm::Disassembler::print_inst(size_t PC, const gbdsm::Instruction& inst) 
         to_print = to_print.replace(found, 4, to_hex(rom_[PC + 1], rom_[PC + 2]));
     }
     else if ((found = to_print.find("R8")) != std::string::npos) {
-        int8_t target = rom_[PC + 1] + PC + inst.length;
+        uint16_t target = (int8_t)rom_[PC + 1] + PC + inst.length;
         to_print = to_print.replace(found, 2, to_hex(target));
     }
     else if ((found = to_print.find("A16")) != std::string::npos) {
