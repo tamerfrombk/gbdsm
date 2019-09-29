@@ -19,6 +19,7 @@ public:
     virtual void disassemble(size_t start, size_t end) = 0;
 
 protected:
+    std::string format(size_t PC, const gbdsm::Instruction& inst) const;
     void print_inst(size_t PC, const gbdsm::Instruction& inst) const;
 
     Rom rom_;

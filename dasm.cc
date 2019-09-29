@@ -9,7 +9,7 @@
 gbdsm::Disassembler::Disassembler(Rom rom)
     : rom_(std::move(rom)) {}
 
-void gbdsm::Disassembler::print_inst(size_t PC, const gbdsm::Instruction& inst) const
+std::string gbdsm::Disassembler::format(size_t PC, const gbdsm::Instruction& inst) const
 {
     size_t found = 0;
     std::string to_print = inst.mnemonic;
@@ -32,7 +32,13 @@ void gbdsm::Disassembler::print_inst(size_t PC, const gbdsm::Instruction& inst) 
 
     to_print = gbdsm::justify(20, to_print, to_hex(PC));
 
-    std::printf("%s\n", to_print.c_str());
+    return to_print;
+}
+
+void gbdsm::Disassembler::print_inst(size_t PC, const gbdsm::Instruction& inst) const
+{
+    const std::string out = format(PC, inst);
+    std::puts(out.c_str());
 }
 
 std::unique_ptr<gbdsm::Disassembler> gbdsm::create_dasm(gbdsm::Rom rom, gbdsm::DisassemblerAlgo algo)
