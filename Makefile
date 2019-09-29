@@ -4,7 +4,9 @@
 # Copyright Tamer Aly 2019
 #
 
-CXXFLAGS := --std=c++14 -Wall -Wextra -Wpedantic -Werror
+VERSION := "1.1.0"
+
+CXXFLAGS := --std=c++14 -Wall -Wextra -Wpedantic -Werror -DGBDSM_VERSION=\"$(VERSION)\"
 
 SOURCES := $(wildcard *.cc)
 OBJECTS := $(SOURCES:.cc=.o)
@@ -29,13 +31,13 @@ $(PROGRAM) : $(OBJECTS) $(HEADERS)
 	$(CXX) $(CXXFLAGS) -o $(PROGRAM) $(OBJECTS)
 
 install : $(PROGRAM)
-	mkdir -p $(INSTALL_DIR) 
+	mkdir -p $(INSTALL_DIR)
 	cp -f $(PROGRAM) $(INSTALL_DIR)
 	mkdir -p $(MAN_PAGE_DIR)
 	cp -f $(MAN_PAGE) $(MAN_PAGE_DIR)
 	ln -sf $(MAN_PAGE_DIR)/$(MAN_PAGE) $(MAN_PAGE_LINK)/$(MAN_PAGE)
 
-uninstall : 
+uninstall :
 	rm -f $(INSTALL_DIR)/$(PROGRAM)
 	rm -f $(MAN_PAGE_LINK)/$(MAN_PAGE)
 	rm -f $(MAN_PAGE_DIR)/$(MAN_PAGE)

@@ -10,7 +10,7 @@
 
 static void print_help()
 {
-    std::puts("gbdsm -- The GameBoy ROM disassembler.");
+    std::printf("gbdsm %s -- The GameBoy ROM disassembler.\n", GBDSM_VERSION);
     std::putchar('\n');
 
     std::puts("Usage: gbdsm '/path/to/rom.gb' [-h] [-b address] [-e address] [--linear | --recursive]");
