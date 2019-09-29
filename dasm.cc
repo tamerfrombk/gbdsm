@@ -30,7 +30,9 @@ void gbdsm::Disassembler::print_inst(size_t PC, const gbdsm::Instruction& inst) 
         to_print = to_print.replace(found, 3, to_hex(rom_[PC + 1], rom_[PC + 2]));
     }
 
-    std::printf("%s    ; $%.4zX\n", to_print.c_str(), PC);
+    to_print = gbdsm::justify(20, to_print, to_hex(PC));
+
+    std::printf("%s\n", to_print.c_str());
 }
 
 std::unique_ptr<gbdsm::Disassembler> gbdsm::create_dasm(gbdsm::Rom rom, gbdsm::DisassemblerAlgo algo)

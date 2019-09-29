@@ -43,15 +43,16 @@ namespace gbdsm {
     template <class N>
     inline std::string to_hex(N n)
     {
-        std::string buf;
-        while (n != 0) {
-            int d = n % 16;
-            char c = "0123456789ABCDEF"[d];
-            buf.push_back(c);
-            n /= 16;
-        }
-        buf.push_back('$');
-        std::reverse(buf.begin(), buf.end());
+        char buf[8] = {0};
+        std::snprintf(buf, sizeof(buf), "$%.4X", n);
+
+        return buf;
+    }
+
+    inline std::string to_hex(size_t n)
+    {
+        char buf[8] = {0};
+        std::snprintf(buf, sizeof(buf), "$%.4zX", n);
 
         return buf;
     }
@@ -62,6 +63,17 @@ namespace gbdsm {
         uint16_t result = n1 | (n2 << 8);
 
         return to_hex(result);
+    }
+
+    inline std::string justify(size_t len, const std::string& s1, const std::string& s2)
+    {
+        const size_t total_length = s1.length() + s2.length();
+
+        const size_t pad_length = total_length > len ? 4 : len - total_length;
+
+        const std::string pad(pad_length, ' ');
+
+        return s1 + pad + s2;
     }
 
 }
