@@ -19,6 +19,8 @@ Optional arguments:
 --recursive   use the recursive search algorithm for disassembly.
 ```
 
+For more information about the different algorithms, consult the `man` page.
+
 ## Building
 
 `gbdsm` uses a standard `Makefile` for building and installing. A version of `g++` supporting C++14 is required.

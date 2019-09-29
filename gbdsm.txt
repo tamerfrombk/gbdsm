@@ -1,0 +1,50 @@
+NAME
+    gbdsm 1.1.0 - The GameBoy ROM disassembler.
+
+SYNOPSIS
+    gbdsm '/path/to/rom.gb' [-h] [-b address] [-e address] [--linear | --recursive]
+
+DESCRIPTION
+    gbdsm is a minimal GameBoy ROM disassembler. It supports range disassembly as well as two general algorithms for
+    disassembly. The only required argument is the path to the GameBoy ROM file. This path should be supplied first in the argument list. All other arguments are optional and are discussed below. See the NOTES section for more
+    information about the two types of algorithms that are present.
+
+OPTIONS
+    -h            show a help message and exit.
+    -b address    set the starting address for the disassembler in decimal. Defaults to 0x0.
+    -e address    set the end address for the disassembler in decimal. Defaults to the end of ROM.
+    --linear      use the linear sweep algorithm for disassembly. This algorithm is the default.
+    --recursive   use the recursive search algorithm for disassembly.
+
+EXAMPLE
+  Disassemble the entirety of 'boot.gb':
+
+    $ gbdsm boot.gb
+
+  Disassemble 'boot.gb' starting from address 0 and ending at address 20 in decimal:
+
+    $ gbdsm boot.gb -b 0 -e 20
+
+  Disassemble the entirety of 'boot.gb' using the recursive search algorithm:
+
+    $ gbdsm boot.gb --recursive
+
+NOTES
+    There are two main classes of disassembly algorithms: linear sweep and recursive search. Linear sweep is pretty simple. It starts with the first byte in the code section and proceeds by decoding each byte as code until some illegal instruction is encountered. Recursive search is a more advanced algorithm that starts at the program's main entry point and proceeds by following each branch or jump instruction encountered in the binary using either a depth-first or breadth-first approach. Essentially, a recursive search algorithm attempts to recreate the call graph by eagerly following jump or branch instructions during its disassembly process. Any address that is visited during the call graph reconstruction is considered code and anything else is considered data.
+    Unfortunately, neither approach is completely precise. There are a few hurdles to overcome when achieving accurate disassembly:
+
+        1. Data embedded in the code regions.
+        2. Variable instruction sizes.
+        3. Indirect or dynamically resolved branch or jump instructions.
+        4. Functions without explicit CALL sites within the executable's code segment.
+
+    The first and second bullet point render the linear sweep algorithm less effective whereas the third and forth can degrade or completely destroy the efficacy of the control flow analysis used in the recursive traversal algorithm. Unsurprisingly, distinguising code from data in a binary file is a fundamentally undecidable problem unless there is a standard ABI for the target platform specifying where code and data should be.
+
+    As an example, consider instruction 0xE9 or the "JP (HL)" instruction for the GameBoy CPU. This instruction is 1 byte wide and instructs the CPU to jump to the address contained in the HL register. Using a linear sweep algorithm, we can disassemble this instruction simply as "JP (HL)" and move on. However, this instruction makes a recursive search algorithm much less effective because we simply cannot follow the target of the jump without completely emulating the CPU execution.
+
+BUGS
+None yet. If any bugs are discovered, please send an email to Tamer Aly (taly.dev75@gmail.com).
+
+AUTHOR
+Tamer Aly (C) 2019
+
