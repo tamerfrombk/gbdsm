@@ -14,6 +14,7 @@ using Rom = std::vector<uint8_t>;
 class Disassembler {
 public:
     Disassembler(Rom rom);
+    virtual ~Disassembler() = default;
 
     virtual void disassemble(size_t start, size_t end) = 0;
 
