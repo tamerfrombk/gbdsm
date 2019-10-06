@@ -30,9 +30,8 @@ std::string gbdsm::Disassembler::format(size_t PC, const gbdsm::Instruction& ins
         to_print = to_print.replace(found, 3, to_hex(rom_[PC + 1], rom_[PC + 2]));
     }
 
-    to_print = gbdsm::justify(20, to_print, to_hex(PC));
-
-    return to_print;
+    const auto addr = "; " + to_hex(PC);
+    return gbdsm::justify(25, to_print, addr);
 }
 
 void gbdsm::Disassembler::print_inst(size_t PC, const gbdsm::Instruction& inst) const

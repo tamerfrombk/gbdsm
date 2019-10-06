@@ -46,14 +46,14 @@ Here is an example showing the disassembly for the address range [0, 20) for the
 ```
 > ./gbdsm boot.gb -b 0 -e 20
 
-LD SP,$FFFE    $0000
-XOR A          $0003
-LD HL,$9FFF    $0004
-LD (HL-),A     $0007
-BIT 7,H        $0008
-JR NZ,$0007    $000A
-LD HL,$FF26    $000C
-LD C,$0011     $000F
-LD A,$0080     $0011
-LD (HL-),A     $0013
+LD SP,$FFFE       ; $0000
+XOR A             ; $0003
+LD HL,$9FFF       ; $0004
+LD (HL-),A        ; $0007
+BIT 7,H           ; $0008
+JR NZ,$0007       ; $000A
+LD HL,$FF26       ; $000C
+LD C,$0011        ; $000F
+LD A,$0080        ; $0011
+LD (HL-),A        ; $0013
 ```
