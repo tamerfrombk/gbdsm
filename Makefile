@@ -4,7 +4,7 @@
 # Copyright Tamer Aly 2019
 #
 
-VERSION := "1.1.0"
+VERSION := "1.1.1"
 
 CXXFLAGS := --std=c++14 -Wall -Wextra -Wpedantic -Werror -DGBDSM_VERSION=\"$(VERSION)\"
 
